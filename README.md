@@ -1,4 +1,4 @@
-# Sysprog-P1-tevenKight
+# Sysprog-P1-StevenKight
 ## Objectives
 Specific objectives of the assignment are listed below - 
 1. Learn what type of programming can benefit from multi-core multithreaded programs.
