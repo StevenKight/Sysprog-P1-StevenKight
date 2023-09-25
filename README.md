@@ -1,4 +1,14 @@
 # Sysprog-P1-StevenKight
+
+## Rust Code
+The rust code for this project can be found in the following files:
+- [main.rs](./Sysprog-P1-StevenKight/src/main.rs)
+- [lib.rs](./Sysprog-P1-StevenKight/src/lib.rs)
+
+## Cargo
+The Rust project was built using Cargo. The Cargo.toml file can be found at the following path:
+- [Cargo.toml](./Sysprog-P1-StevenKight/Cargo.toml)
+
 ## Objectives
 Specific objectives of the assignment are listed below - 
 1. Learn what type of programming can benefit from multi-core multithreaded programs.
