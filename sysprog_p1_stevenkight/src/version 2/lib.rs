@@ -8,7 +8,7 @@
 ///   This file contains the functions to read the input files, process data in files, and utilize processed data.
 /// 
 
-use std::{fs, io::{BufRead, Write}};
+use std::{fs, io::BufRead, sync::mpsc::Sender};
 
 /// 
 /// Read all the directories in the given directory and return a vector of directories.
@@ -86,22 +86,22 @@ fn process_file_contents(file_contents: &std::fs::File) -> String {
 /// ---------
 /// * `status` - The status of the processing. "OK" if successful, "ERROR" if not.
 /// 
-pub fn process_input(directories: Vec<String>, output_folder: &str) -> String {
+pub fn process_input(directories: Vec<String>, tx: Sender<String>) -> String {
 
     for directory in directories {
         let files: Vec<String> = read_directory(&directory);
-        for file in files {
+        for file_name in files {
             // Ignore the summary file
-            if file.contains("summary") {
+            if file_name.contains("summary") {
                 continue;
             }
 
             // Open the file
-            let file = std::fs::File::open(&file).expect("Unable to open file.");
+            let file = std::fs::File::open(&file_name).expect("Unable to open file.");
 
             // Process the file
             let summary = process_file_contents(&file);
-            write_to_summary_file(summary, output_folder);
+            tx.send(summary);
             
             // Close the file
             std::mem::drop(file);
@@ -109,29 +109,4 @@ pub fn process_input(directories: Vec<String>, output_folder: &str) -> String {
     }
 
     "OK".to_string()
-}
-
-///
-/// This takes a summary string and writes it to the summary file.
-/// 
-/// Arguments
-/// ---------
-/// * `summary` - The summary string to write to the file
-/// * `output_folder` - The output folder path
-/// 
-fn write_to_summary_file(summary: String, output_folder: &str) {
-    let output_file = format!("{}/weekly_sales_summary.txt", output_folder);
-    if !std::path::Path::new(&output_file).exists() {
-        std::fs::File::create(&output_file).expect("Unable to create output file."); 
-    }
-
-    let mut file = std::fs::OpenOptions::new()
-        .write(true)
-        .append(true)
-        .open(&output_file)
-        .unwrap();
-
-    file.write_all(summary.as_bytes()).expect("Unable to write data");
-
-    std::mem::drop(file);
 }

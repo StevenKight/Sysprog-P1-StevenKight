@@ -57,7 +57,6 @@ fn main() {
 
     let start = std::time::Instant::now(); // start the timer
 
-    // TODO: Call the file input function in lib.rs and pass the list of folders (with path) for all the branches.
     let response = lib::process_input(branches, &output_folder);
     println!("{}", response);
 

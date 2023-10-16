@@ -9,6 +9,11 @@
 
 mod lib;
 
+use std::thread;
+use std::sync::mpsc;
+use std::io::Write;
+use std::borrow::Borrow;
+
 ///
 /// Accept, validate and parse the data folder name (with path) from the command line argument.
 /// Check if the output folder exists in the data folder - if not, create it.
@@ -53,16 +58,70 @@ fn main() {
     // Accept, validate and parse the data folder name (with path) from the command line argument
     let (data_folder, output_folder) = process_args();
 
+    // Read the directory and get the list of files
     let branches = lib::read_directory(&data_folder);
+
+    // Split the branches vector into 4 vectors and setup channels
+    let num_threads = 3;
+    let mut receivers: Vec<mpsc::Receiver<String>> = Vec::new();
+
+    // Split the branches vector into num_threads vectors
+    let branch_chunks = branches.chunks(branches.len() / num_threads).map(|x| x.to_vec()).collect::<Vec<_>>();
 
     let start = std::time::Instant::now(); // start the timer
 
-    // TODO: Call the file input function in lib.rs and pass the list of folders (with path) for all the branches.
-    let response = lib::process_input(branches, &output_folder);
-    println!("{}", response);
+    // Make a vector to hold the children which are spawned.
+    let mut children = vec![];
+
+    for chunk in branch_chunks {
+        let branch_chunk = chunk.clone();
+        let (tx, rx) = mpsc::channel();
+        receivers.push(rx);
+
+        // Spin up another thread
+        children.push(thread::spawn(move || {
+            let response = lib::process_input(branch_chunk, tx);
+            println!("Thread finished with response: {}", response);
+        }));
+    }
+
+    for rx in receivers {
+        let response = rx.recv().unwrap();
+        write_to_summary_file(response, &output_folder);
+    }
+
+    for child in children {
+        // Wait for the thread to finish. Returns a result.
+        let _ = child.join();
+    }
 
     let end = start.elapsed(); // stop the timer
 
     println!("\nTotal time taken: {:?}", end); // print the total time taken
     println!("Phew! I am done."); // print the message to indicate processing of all files are done
+}
+
+///
+/// This takes a summary string and writes it to the summary file.
+/// 
+/// Arguments
+/// ---------
+/// * `summary` - The summary string to write to the file
+/// * `output_folder` - The output folder path
+/// 
+fn write_to_summary_file(summary: String, output_folder: &str) {
+    let output_file = format!("{}/weekly_sales_summary.txt", output_folder);
+    if !std::path::Path::new(&output_file).exists() {
+        std::fs::File::create(&output_file).expect("Unable to create output file."); 
+    }
+
+    let mut file = std::fs::OpenOptions::new()
+        .write(true)
+        .append(true)
+        .open(&output_file)
+        .unwrap();
+
+    file.write_all(summary.as_bytes()).expect("Unable to write data");
+
+    std::mem::drop(file);
 }

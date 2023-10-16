@@ -51,7 +51,7 @@ fn process_file_contents(file_contents: &std::fs::File) -> String {
     let mut product = String::new();
 
     let mut quantity_sum = 0;
-    for line in lines.collect::<Vec<_>>() { // TODO: Optimize this loop
+    for line in lines.collect::<Vec<_>>() {
         let read_line = line.unwrap();
         let trimmed_line = read_line.trim();
 
