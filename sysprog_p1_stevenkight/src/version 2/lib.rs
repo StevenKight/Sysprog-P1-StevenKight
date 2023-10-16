@@ -101,7 +101,7 @@ pub fn process_input(directories: Vec<String>, tx: Sender<String>) -> String {
 
             // Process the file
             let summary = process_file_contents(&file);
-            tx.send(summary);
+            let _ = tx.send(summary);
             
             // Close the file
             std::mem::drop(file);

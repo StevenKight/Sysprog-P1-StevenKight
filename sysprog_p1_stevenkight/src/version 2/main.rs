@@ -73,7 +73,7 @@ fn main() {
     // Make a vector to hold the children which are spawned.
     let mut children = vec![];
 
-    for chunk in branch_chunks {
+    for chunk in &branch_chunks {
         let branch_chunk = chunk.clone();
         let (tx, rx) = mpsc::channel();
         receivers.push(rx);
@@ -86,8 +86,10 @@ fn main() {
     }
 
     for rx in receivers {
-        let response = rx.recv().unwrap();
-        write_to_summary_file(response, &output_folder);
+        for i in &branch_chunks[0] {
+            let summary = rx.recv().unwrap();
+            write_to_summary_file(summary, &output_folder);
+        }
     }
 
     for child in children {
