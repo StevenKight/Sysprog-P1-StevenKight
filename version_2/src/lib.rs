@@ -81,6 +81,7 @@ fn process_file_contents(file_contents: &std::fs::File) -> String {
 /// Arguments
 /// ---------
 /// * `directories` - A vector of directories to process
+/// * `tx` - The channel to send the summary to
 /// 
 /// Returns
 /// ---------

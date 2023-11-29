@@ -94,16 +94,15 @@ fn main() {
         }));
     }
 
-    for rx in receivers {
-        for _i in &branch_chunks[0] {
-            let summary = rx.recv().unwrap();
-            write_to_summary_file(summary, &output_folder);
-        }
-    }
-
     for child in children {
         // Wait for the thread to finish. Returns a result.
         let _ = child.join();
+    }
+
+    for rx in receivers {
+        for (_i, received) in rx.iter().enumerate() {
+            write_to_summary_file(received, &output_folder);
+        }
     }
 
     let end = start.elapsed(); // stop the timer
