@@ -1,13 +1,12 @@
 # Sysprog-P1-StevenKight
 
 ## Rust Code
-The rust code for this project can be found in the following files:
-- [main.rs](./Sysprog-P1-StevenKight/src/main.rs)
-- [lib.rs](./Sysprog-P1-StevenKight/src/lib.rs)
+
 
 ## Cargo
-The Rust project was built using Cargo. The Cargo.toml file can be found at the following path:
-- [Cargo.toml](./Sysprog-P1-StevenKight/Cargo.toml)
+The Rust project was built using Cargo. The Cargo.toml files can be found at the following paths:
+- [./version_1/Cargo.toml](./version_1/Cargo.toml)
+- [./version_2/Cargo.toml](./version_2/Cargo.toml)
 
 ## Objectives
 Specific objectives of the assignment are listed below - 
@@ -23,15 +22,11 @@ Full description can be found in the following pdf:
 
 ## How to run:
 1. Clone the repository
-2. Navigate to the Sysprog-P1-StevenKight directory
-3. Follow the instructions below for the version you want to run
-4. rustc main.rs && ./main <output_file_path> (e.g. `rustc main.rs && ./main ../data`)
-
-### To run version 1:
-3. cd into the `version 1` directory
-
-### To run version 2:
-3. cd into the `version 2` directory
+2. cd into the wanted versions `/src/` directory
+   1. Version 1 is the single threaded version found in the [./version_1/src](./version_1/src) directory
+   2. Version 2 is the multithreaded version found in the [./version_2/src](./version_2/src) directory
+3. run `rustc main.rs` to compile the program
+4. run `./main <data directory path>` to run the program with the data directory path as the argument (e.g. `./main ../data/` for the included test data directory)
 
 ## Improvements from version 1 to version 2:
 
