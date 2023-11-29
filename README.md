@@ -25,9 +25,8 @@ Full description can be found in the following pdf:
 2. cd into the wanted versions `/src/` directory
    1. Version 1 is the single threaded version found in the [./version_1/src](./version_1/src) directory
    2. Version 2 is the multithreaded version found in the [./version_2/src](./version_2/src) directory
-3. run `rustc main.rs` to compile the program
-4. run `./main <data directory path>` to run the program with the data directory path as the argument (e.g. `./main ../data/` for the included test data directory)
+3. run `cargo run <data directory path>` to run the program with the data directory path as the argument (e.g. `./data` for the included test data directory)
 
 ## Improvements from version 1 to version 2:
 
-Through the use of threading, a significant performance increase was achieved going from just under 2ms to around 0.5ms. This was achieved by splitting the data into 4 chunks and processing each chunk in a separate thread. The threads were then joined and the results were written to the output file. The code for this can be found in the `version 2` directory.
+Through the use of threading, a significant performance increase was achieved going from between 1.5-2ms to ~1ms. This was achieved by splitting the data into 4 chunks and processing each chunk in a separate thread. The threads were then joined and the results were written to the output file. The code for this can be found in the `version 2` directory.
