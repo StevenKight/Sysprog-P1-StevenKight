@@ -7,7 +7,10 @@
 ///    This project is a part of the course work for the course CS-3280 at the University of West Georgia.
 /// 
 
-mod lib;
+use version_1::read_directory;
+use version_1::process_input;
+
+use std::process;
 
 ///
 /// Accept, validate and parse the data folder name (with path) from the command line argument.
@@ -24,12 +27,20 @@ mod lib;
 /// * `output_folder` - The output folder path
 /// 
 fn process_args() -> (String, String) {
-    let data_folder = std::env::args().nth(1).expect("Please provide a data folder.");
+    let args = std::env::args().nth(1);
+
+    // Validate arguments
+    if args.is_none() {
+        eprintln!("Please provide a data folder in the format: `cargo run <data_folder>`");
+        process::exit(1);
+    }
+    let data_folder = args.unwrap();
 
     // Validate if the data folder exists
     println!("Data folder given: {}", data_folder);
     if !std::path::Path::new(&data_folder).exists() {
-        panic!("Data folder does not exist.");
+        eprintln!("Data folder given does not exist.");
+        process::exit(1);
     }
 
     // Create the output folder if it does not exist
@@ -53,11 +64,11 @@ fn main() {
     // Accept, validate and parse the data folder name (with path) from the command line argument
     let (data_folder, output_folder) = process_args();
 
-    let branches = lib::read_directory(&data_folder);
+    let branches = read_directory(&data_folder);
 
     let start = std::time::Instant::now(); // start the timer
 
-    let response = lib::process_input(branches, &output_folder);
+    let response = process_input(branches, &output_folder);
     println!("{}", response);
 
     let end = start.elapsed(); // stop the timer

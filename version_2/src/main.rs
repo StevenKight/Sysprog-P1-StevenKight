@@ -7,12 +7,13 @@
 ///    This project is a part of the course work for the course CS-3280 at the University of West Georgia.
 /// 
 
-mod lib;
+use version_2::read_directory;
+use version_2::process_input;
 
+use std::process;
 use std::thread;
 use std::sync::mpsc;
 use std::io::Write;
-use std::borrow::Borrow;
 
 ///
 /// Accept, validate and parse the data folder name (with path) from the command line argument.
@@ -29,12 +30,20 @@ use std::borrow::Borrow;
 /// * `output_folder` - The output folder path
 /// 
 fn process_args() -> (String, String) {
-    let data_folder = std::env::args().nth(1).expect("Please provide a data folder.");
+    let args = std::env::args().nth(1);
+
+    // Validate arguments
+    if args.is_none() {
+        eprintln!("Please provide a data folder in the format: `cargo run <data_folder>`");
+        process::exit(1);
+    }
+    let data_folder = args.unwrap();
 
     // Validate if the data folder exists
     println!("Data folder given: {}", data_folder);
     if !std::path::Path::new(&data_folder).exists() {
-        panic!("Data folder does not exist.");
+        eprintln!("Data folder given does not exist.");
+        process::exit(1);
     }
 
     // Create the output folder if it does not exist
@@ -59,7 +68,7 @@ fn main() {
     let (data_folder, output_folder) = process_args();
 
     // Read the directory and get the list of files
-    let branches = lib::read_directory(&data_folder);
+    let branches = read_directory(&data_folder);
 
     // Split the branches vector into 4 vectors and setup channels
     let num_threads = 3;
@@ -80,13 +89,13 @@ fn main() {
 
         // Spin up another thread
         children.push(thread::spawn(move || {
-            let response = lib::process_input(branch_chunk, tx);
+            let response = process_input(branch_chunk, tx);
             println!("Thread finished with response: {}", response);
         }));
     }
 
     for rx in receivers {
-        for i in &branch_chunks[0] {
+        for _i in &branch_chunks[0] {
             let summary = rx.recv().unwrap();
             write_to_summary_file(summary, &output_folder);
         }
